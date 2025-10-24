@@ -1,0 +1,49 @@
+[
+	{
+		"uuid": "d9307f2d-22c5-439e-b220-89ec600e1abc",
+		"type": "project",
+		"title": "CS College",
+		"description": "Here is where i put everything that i have to do to finish college and get a Computer's Science degree.",
+		"deadline": null,
+		"priority": "high",
+		"childTasks": [],
+		"notes": [],
+		"completed": 0
+	},
+	{
+		"uuid": "5cebb7de-f034-44e1-aba8-b3dee9d879b1",
+		"type": "project",
+		"title": "Snake Game",
+		"description": "A spare project to practice my skills in C#.",
+		"deadline": null,
+		"priority": "medium",
+		"childTasks": [],
+		"notes": [],
+		"completed": 0
+	},
+	{
+		"uuid": "c85e8d1d-4dfe-435f-aa5e-8d0b2507db82",
+		"type": "project",
+		"title": "Art Course",
+		"description": "",
+		"deadline": null,
+		"priority": "medium",
+		"childTasks": [],
+		"notes": ["b18dc9fd-508a-477f-8be6-d02209899df2"],
+		"completed": 0
+	},
+	{
+		"uuid": "216710da-d2f3-4a6a-96ff-60324bf88f15",
+		"type": "project",
+		"title": "Self improvement",
+		"description": "I only got to live one life, might as well not throw it into the trash",
+		"deadline": 33292598400,
+		"priority": "very high",
+		"childTasks": [
+			"f8861a07-4428-4c7f-9caf-c18dcfa782b2",
+			"6aa46a82-a3b9-4f24-9f79-faec854a4d34"
+		],
+		"notes": [],
+		"completed": 1
+	}
+]
