@@ -1,8 +1,11 @@
+const dotenv = require("dotenv");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require('webpack');
 
-module.exports = {
+module.exports =
+{
   mode: "development",
   entry: "./src/main.ts",
   devtool: "eval-source-map",
@@ -22,7 +25,7 @@ module.exports = {
       },
       {
         test: /\.html$/i,
-        use: "raw-loader",
+        use: "html-loader",
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -43,6 +46,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin(),
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(dotenv.config().parsed),
+    }),
   ],
 };

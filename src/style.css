@@ -1,0 +1,68 @@
+:root {
+  --hue: 237;
+
+  --color-1: oklch(77% 0.025 var(--hue));
+  --color-2: oklch(82% 0.025 var(--hue));
+  --color-3: oklch(87% 0.025 var(--hue));
+
+  --text-1: oklch(95% 0.025 var(--hue));
+
+  --shadow-s: 0px 3px 8px 0px oklch(from var(--color-3) 25% c h / 15%);
+  --shadow-m: 0px 6px 8px 0px oklch(from var(--color-3) 15% c h / 25%);
+  --shadow-l: 0px 9px 8px 0px oklch(from var(--color-3) 10% c h / 35%);
+
+  --inner-light-s: 0px 1px 1px 1px oklch(from var(--color-3) 90% c h) inset;
+  --inner-light-m: 0px 3px 2px 1px oklch(from var(--color-3) 90% c h) inset;
+  --inner-light-l: 0px 5px 3px 2px oklch(from var(--color-3) 90% c h) inset;
+
+  font-size: 24px;
+
+}
+
+body {
+  padding: 7rem;
+  padding-left: 10rem;
+  padding-right: 10rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90dvh;
+  box-sizing: border-box;
+}
+
+img.bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+div.container {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 4rem;
+  gap: 2rem;
+  background: linear-gradient(oklch(from var(--color-1) l c h / 75%) 0%, oklch(from var(--color-3) l c h / 40%) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--inner-light-l);
+  border-radius: 5rem;
+}
+
+div.container > div {
+  border-radius: 3rem;
+  background-color: oklch(from var(--color-2) l c h / 0%);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  box-shadow: var(--shadow-m), var(--inner-light-m);
+}
