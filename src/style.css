@@ -1,22 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 :root {
   --hue: 237;
 
-  --color-1: oklch(77% 0.025 var(--hue));
-  --color-2: oklch(82% 0.025 var(--hue));
-  --color-3: oklch(87% 0.025 var(--hue));
+  --accent-color: oklch(64% 0.12 var(--hue));
 
-  --text-1: oklch(95% 0.025 var(--hue));
+  --color-1: oklch(75% 0.025 var(--hue));
+  --color-2: oklch(78% 0.025 var(--hue));
+  --color-3: oklch(81% 0.025 var(--hue));
 
-  --shadow-s: 0px 3px 8px 0px oklch(from var(--color-3) 25% c h / 15%);
-  --shadow-m: 0px 6px 8px 0px oklch(from var(--color-3) 15% c h / 25%);
-  --shadow-l: 0px 9px 8px 0px oklch(from var(--color-3) 10% c h / 35%);
+  --text-color-1: oklch(97% 0.025 var(--hue));
+
+  --shadow-s: 0px 3px 13px 0px oklch(from var(--color-3) 25% c h / 10%);
+  --shadow-m: 0px 6px 13px 0px oklch(from var(--color-3) 15% c h / 15%);
+  --shadow-l: 0px 9px 13px 0px oklch(from var(--color-3) 10% c h / 20%);
 
   --inner-light-s: 0px 1px 1px 1px oklch(from var(--color-3) 90% c h) inset;
   --inner-light-m: 0px 3px 2px 1px oklch(from var(--color-3) 90% c h) inset;
-  --inner-light-l: 0px 5px 3px 2px oklch(from var(--color-3) 90% c h) inset;
+  --inner-light-l: 0px 5px 3px 2px oklch(from var(--color-3) 80% c h) inset;
 
   font-size: 24px;
-
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color-1);
 }
 
 body {
@@ -29,6 +34,16 @@ body {
   justify-content: center;
   min-height: 90dvh;
   box-sizing: border-box;
+}
+
+h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.4rem;
+  font-synthesis-weight: 700;
 }
 
 img.bg {
@@ -47,22 +62,128 @@ div.container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 4rem;
+  padding: 3.5rem;
   gap: 2rem;
-  background: linear-gradient(oklch(from var(--color-1) l c h / 75%) 0%, oklch(from var(--color-3) l c h / 40%) 100%);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(oklch(from var(--color-1) l c h / 60%) 0%, oklch(from var(--color-3) l c h / 30%) 100%);
+  backdrop-filter: blur(16px);
   box-shadow: var(--inner-light-l);
-  border-radius: 5rem;
+  border-radius: 6rem;
+  box-sizing: border-box;
 }
 
 div.container > div {
   border-radius: 3rem;
-  background-color: oklch(from var(--color-2) l c h / 0%);
-  backdrop-filter: blur(4px);
+  background-color: oklch(from var(--color-2) l c h / 40%);
+  backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
   box-shadow: var(--shadow-m), var(--inner-light-m);
+}
+
+div.content {
+  padding-bottom: 2rem;
+}
+
+div.content nav.header {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  border-bottom: 1px solid var(--text-color-1);
+  margin-bottom: 1rem;
+
+  & > * {
+    flex: 1 1 min-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 2rem 0;
+  }
+
+  & > h2.temperature {
+    border-top-left-radius: inherit;
+  }
+
+  & > h2.rain {
+    border-top-right-radius: inherit;
+  }
+
+  & > h2.selected {
+    background-color: oklch(from var(--color-3) l c h / 50%);
+  }
+
+  & > h2:hover:not(.selected) {
+    background-color: oklch(from var(--color-3) l c h / 20%);
+  }
+
+  & span.units {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-left: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--text-color-1);
+    border-radius: 0.5rem;
+
+    & > * {z-index: 1;}
+  }
+
+  & span.units:hover {
+    background-color: oklch(from var(--color-3) l c h / 40%);
+  }
+
+  & span.units::after {
+    content: "";
+    border-radius: inherit;
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: var(--accent-color);
+    transition: 300ms all;
+  }
+}
+
+p.resolved-city {
+  font-size: 1.75rem;
+  font-weight: 300;
+}
+
+img.climate {
+  width: 300px;
+  height: 300px;
+  border: 1px solid black;
+}
+
+div.temp {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0;
+
+  & > p {
+    margin: 0;
+    padding: 0;
+  }
+
+  & > p.current-temp {
+    font-weight: 400;
+    font-size: 4rem;
+  }
+
+  & > :not(p.current-temp) {
+    letter-spacing: 1px;
+    font-weight: 300;
+    font-size: 2rem;
+  }
 }
