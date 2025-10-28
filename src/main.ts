@@ -1,21 +1,21 @@
 import "./style.css";
 
-enum View {
-	Temperature,
-	Wind,
-	Rain,
-}
+import { View, type TemperatureUnit, type State } from "./types";
+import { changeUnit, changeView } from "./handlers";
 
-type TemperatureUnit = "celsius" | "feirenheit";
-
-const currentUnit: TemperatureUnit = "celsius";
-const currentView = View.Temperature;
+const state: State = {
+	unit: "celsius",
+	view: View.Temperature,
+};
 
 const location = document.querySelector("input.location") as HTMLInputElement;
 const dateElem = document.querySelector(
 	"input.initial_date",
 ) as HTMLInputElement;
-const result = document.querySelector("p.result") as HTMLParagraphElement;
+
+document.querySelectorAll("nav.header > h2").forEach((elem) => {
+	//	elem.addEventListener("click", ());
+});
 
 document.addEventListener("keypress", (e) => {
 	if (e.key !== "Enter") return;
