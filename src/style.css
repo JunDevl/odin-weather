@@ -82,11 +82,36 @@ div.container > div {
   box-shadow: var(--shadow-m), var(--inner-light-m);
 }
 
+div.container > div.query {
+  padding: 6rem;
+  gap: 1rem;
+
+  & > div.inputs {
+    align-self: stretch;
+    flex: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > * {
+      padding: 0;
+      margin: 0;
+      height: 1.5rem; 
+      font-size: 1rem; 
+      background-color: oklch(from var(--text-color-1) l c h / 50%);
+      border: none;
+      border-bottom: 3px solid blue; 
+    }
+
+    & > input#location {flex: 1; padding-left: 0.4rem;}
+  }
+}
+
 div.content {
   padding-bottom: 2rem;
 }
 
-div.content nav.header {
+div.content > nav.header {
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
   width: 100%;
@@ -95,15 +120,6 @@ div.content nav.header {
   align-items: stretch;
   border-bottom: 1px solid var(--text-color-1);
   margin-bottom: 1rem;
-
-  & > * {
-    flex: 1 1 min-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 2rem 0;
-  }
 
   & > h2.temperature {
     border-top-left-radius: inherit;
@@ -121,7 +137,7 @@ div.content nav.header {
     background-color: oklch(from var(--color-3) l c h / 20%);
   }
 
-  & span.units {
+  & > h2.temperature > span.units {
     position: relative;
     display: flex;
     align-items: stretch;
@@ -132,7 +148,7 @@ div.content nav.header {
     border: 1px solid var(--text-color-1);
     border-radius: 0.5rem;
 
-    & > * {z-index: 1;}
+    & > span {z-index: 1;}
   }
 
   & span.units:hover {
@@ -150,6 +166,15 @@ div.content nav.header {
     background-color: var(--accent-color);
     transition: 300ms all;
   }
+
+  & > h2 {
+    flex: 1 1 min-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 2rem 0;
+  }
 }
 
 p.resolved-city {
@@ -157,11 +182,11 @@ p.resolved-city {
   font-weight: 300;
 }
 
-div.content > div.view {
+div.content > div.body > div.view {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: stretch;
+  align-items: center;
+  justify-content: center;
 
   & > * {flex: auto;}
 }
@@ -188,6 +213,7 @@ div.temp {
   & > p {
     margin: 0;
     padding: 0;
+    flex: 1;
   }
 
   & > :not(p.pop) {

@@ -1,11 +1,18 @@
 import { View, type TemperatureUnit, type State } from "./types";
 
-export function changeView(state: State, targetView: View) {
-	const content = document.querySelector("div.content") as HTMLDivElement;
-	content.removeChild(content.lastChild as Node);
+export function changeView(state: State, targetView: keyof typeof View) {
+	if ((state.view && View[state.view] === targetView) || !state.query) return;
+
+	state.view = View[targetView];
+
+	const body = document.querySelector(
+		"div.content > div.body",
+	) as HTMLDivElement;
+	if (body.children.length > 1)
+		body.removeChild(body.children[body.children.length - 1]);
 
 	switch (targetView) {
-		case View.Temperature: {
+		case "Temperature": {
 			const tempView = document.createElement("div");
 			tempView.className = "temperature view";
 
@@ -19,12 +26,24 @@ export function changeView(state: State, targetView: View) {
 
 			const currentTemp = document.createElement("p");
 			currentTemp.className = "current-temp pop";
+			currentTemp.insertAdjacentHTML(
+				"afterbegin",
+				`<span class="cur-temp">${state.query?.temperature.temp}ºc</span>`,
+			);
 
 			const minTemp = document.createElement("p");
 			minTemp.className = "minimum-temp";
+			minTemp.insertAdjacentHTML(
+				"afterbegin",
+				`Min: <span class="min-temp">${state.query?.temperature.tempmin}</span>ºc`,
+			);
 
 			const maxTemp = document.createElement("p");
 			maxTemp.className = "maximum-temp";
+			maxTemp.insertAdjacentHTML(
+				"afterbegin",
+				`Max: <span class="max-temp">${state.query?.temperature.tempmax}</span>ºc`,
+			);
 
 			[currentTemp, minTemp, maxTemp].forEach((child) => {
 				tempContainer.appendChild(child);
@@ -34,59 +53,108 @@ export function changeView(state: State, targetView: View) {
 				tempView.appendChild(viewChild);
 			});
 
-			content.appendChild(tempView);
+			body.appendChild(tempView);
 
 			break;
 		}
-		case View.Wind: {
+		case "Wind": {
 			const windView = document.createElement("div");
-			windView.className = "temperature view";
+			windView.className = "wind view";
 
 			const representationImg = document.createElement("img");
 			representationImg.src = "#";
 			representationImg.alt = "Wind Image";
 			representationImg.className = "representation";
 
-			const wind = document.createElement("p");
-			wind.className = "current-wind pop";
+			const windContainer = document.createElement("div");
+			windContainer.className = "wind";
 
-			[representationImg, wind].forEach((viewChild) => {
+			const avgSpeed = document.createElement("p");
+			avgSpeed.className = "avg-day-speed pop";
+			avgSpeed.insertAdjacentHTML(
+				"afterbegin",
+				`Wind: <span class="wind-speed">${state.query.wind.windspeed}</span>ºc`,
+			);
+
+			const windGust = document.createElement("p");
+			windGust.className = "max-wind-gust";
+			windGust.insertAdjacentHTML(
+				"afterbegin",
+				`Wind Gust: <span class="wind-gust">${state.query.wind.windgust}</span>ºc`,
+			);
+
+			[avgSpeed, windGust].forEach((child) => {
+				windContainer.appendChild(child);
+			});
+
+			[representationImg, windContainer].forEach((viewChild) => {
 				windView.appendChild(viewChild);
 			});
 
-			content.appendChild(windView);
+			body.appendChild(windView);
 
 			break;
 		}
-		case View.Rain: {
+		case "Rain": {
 			const rainView = document.createElement("div");
-			rainView.className = "temperature view";
+			rainView.className = "rain view";
 
 			const representationImg = document.createElement("img");
 			representationImg.src = "#";
 			representationImg.alt = "Rain Image";
 			representationImg.className = "representation";
 
-			const rain = document.createElement("p");
-			rain.className = "current-rain pop";
+			const rainContainer = document.createElement("div");
+			rainContainer.className = "temp";
 
-			[representationImg, rain].forEach((viewChild) => {
+			const rain = document.createElement("p");
+			rain.className = "rain pop";
+			rain.insertAdjacentHTML(
+				"afterbegin",
+				`Rain: <span class="precipitaion">${state.query.rain.precip}</span>mm`,
+			);
+
+			const probability = document.createElement("p");
+			probability.className = "rain-probability";
+			probability.insertAdjacentHTML(
+				"afterbegin",
+				`Probability: <span class="probability">${state.query.rain.precipprob}</span>%`,
+			);
+
+			const coverage = document.createElement("p");
+			coverage.className = "maximum-temp";
+			coverage.insertAdjacentHTML(
+				"afterbegin",
+				`City Coverage: <span class="city-coverage">${state.query.rain.precipcover}</span>%`,
+			);
+
+			[rain, probability, coverage].forEach((child) => {
+				rainContainer.appendChild(child);
+			});
+
+			[representationImg, rainContainer].forEach((viewChild) => {
 				rainView.appendChild(viewChild);
 			});
 
-			content.appendChild(rainView);
+			body.appendChild(rainView);
 			break;
 		}
 	}
-
-	state.view = targetView;
 }
 
 export function changeUnit(state: State, targetUnit: TemperatureUnit) {
 	if (targetUnit === "celsius") {
-		document.querySelector(".idk");
+		document
+			.querySelector("span.units > span.celsius")
+			?.classList.add("selected");
+		state.unit = "celsius";
 		return;
 	}
+
+	document
+		.querySelector("span.units > span.feirenheit")
+		?.classList.add("selected");
+	state.unit = "feirenheit";
 
 	return;
 }
