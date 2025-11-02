@@ -3,9 +3,9 @@ export interface State {
 		resolvedAddress: string;
 
 		temperature: {
-			temp: number;
-			tempmin: number;
-			tempmax: number;
+			temp: string;
+			tempmin: string;
+			tempmax: string;
 		};
 
 		wind: {
@@ -23,7 +23,7 @@ export interface State {
 	loading: boolean;
 
 	unit: TemperatureUnit;
-	view: View | null;
+	view: View;
 }
 
 export enum View {

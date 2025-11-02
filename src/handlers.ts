@@ -1,9 +1,25 @@
 import { View, type TemperatureUnit, type State } from "./types";
 
-export function changeView(state: State, targetView: keyof typeof View) {
+export function changeView(
+	state: State,
+	targetView: keyof typeof View,
+	e?: MouseEvent,
+) {
 	if ((state.view && View[state.view] === targetView) || !state.query) return;
 
+	if (e) {
+		const prevSelected = document.querySelector("nav.header > h2.selected");
+
+		if (e.currentTarget === prevSelected || e.target !== e.currentTarget)
+			return;
+
+		prevSelected?.classList.remove("selected");
+		(e.currentTarget as HTMLElement).classList.add("selected");
+	}
+
 	state.view = View[targetView];
+
+	const temperatureUnit = state.unit === "celsius" ? "ºc" : "ºF";
 
 	const body = document.querySelector(
 		"div.content > div.body",
@@ -16,11 +32,6 @@ export function changeView(state: State, targetView: keyof typeof View) {
 			const tempView = document.createElement("div");
 			tempView.className = "temperature view";
 
-			const representationImg = document.createElement("img");
-			representationImg.src = "#";
-			representationImg.alt = "Climate Image";
-			representationImg.className = "representation";
-
 			const tempContainer = document.createElement("div");
 			tempContainer.className = "temp";
 
@@ -28,30 +39,28 @@ export function changeView(state: State, targetView: keyof typeof View) {
 			currentTemp.className = "current-temp pop";
 			currentTemp.insertAdjacentHTML(
 				"afterbegin",
-				`<span class="cur-temp">${state.query?.temperature.temp}ºc</span>`,
+				`<span class="cur-temp">${state.query?.temperature.temp}</span>${temperatureUnit}`,
 			);
 
 			const minTemp = document.createElement("p");
 			minTemp.className = "minimum-temp";
 			minTemp.insertAdjacentHTML(
 				"afterbegin",
-				`Min: <span class="min-temp">${state.query?.temperature.tempmin}</span>ºc`,
+				`Min: <span class="min-temp">${state.query?.temperature.tempmin}</span>${temperatureUnit}`,
 			);
 
 			const maxTemp = document.createElement("p");
 			maxTemp.className = "maximum-temp";
 			maxTemp.insertAdjacentHTML(
 				"afterbegin",
-				`Max: <span class="max-temp">${state.query?.temperature.tempmax}</span>ºc`,
+				`Max: <span class="max-temp">${state.query?.temperature.tempmax}</span>${temperatureUnit}`,
 			);
 
 			[currentTemp, minTemp, maxTemp].forEach((child) => {
 				tempContainer.appendChild(child);
 			});
 
-			[representationImg, tempContainer].forEach((viewChild) => {
-				tempView.appendChild(viewChild);
-			});
+			tempView.appendChild(tempContainer);
 
 			body.appendChild(tempView);
 
@@ -61,11 +70,6 @@ export function changeView(state: State, targetView: keyof typeof View) {
 			const windView = document.createElement("div");
 			windView.className = "wind view";
 
-			const representationImg = document.createElement("img");
-			representationImg.src = "#";
-			representationImg.alt = "Wind Image";
-			representationImg.className = "representation";
-
 			const windContainer = document.createElement("div");
 			windContainer.className = "wind";
 
@@ -73,23 +77,21 @@ export function changeView(state: State, targetView: keyof typeof View) {
 			avgSpeed.className = "avg-day-speed pop";
 			avgSpeed.insertAdjacentHTML(
 				"afterbegin",
-				`Wind: <span class="wind-speed">${state.query.wind.windspeed}</span>ºc`,
+				`Wind: <span class="wind-speed">${state.query.wind.windspeed}</span>km/h`,
 			);
 
 			const windGust = document.createElement("p");
 			windGust.className = "max-wind-gust";
 			windGust.insertAdjacentHTML(
 				"afterbegin",
-				`Wind Gust: <span class="wind-gust">${state.query.wind.windgust}</span>ºc`,
+				`Wind Gust: <span class="wind-gust">${state.query.wind.windgust}</span>km/h`,
 			);
 
 			[avgSpeed, windGust].forEach((child) => {
 				windContainer.appendChild(child);
 			});
 
-			[representationImg, windContainer].forEach((viewChild) => {
-				windView.appendChild(viewChild);
-			});
+			windView.appendChild(windContainer);
 
 			body.appendChild(windView);
 
@@ -99,13 +101,8 @@ export function changeView(state: State, targetView: keyof typeof View) {
 			const rainView = document.createElement("div");
 			rainView.className = "rain view";
 
-			const representationImg = document.createElement("img");
-			representationImg.src = "#";
-			representationImg.alt = "Rain Image";
-			representationImg.className = "representation";
-
 			const rainContainer = document.createElement("div");
-			rainContainer.className = "temp";
+			rainContainer.className = "rain";
 
 			const rain = document.createElement("p");
 			rain.className = "rain pop";
@@ -122,7 +119,7 @@ export function changeView(state: State, targetView: keyof typeof View) {
 			);
 
 			const coverage = document.createElement("p");
-			coverage.className = "maximum-temp";
+			coverage.className = "coverage";
 			coverage.insertAdjacentHTML(
 				"afterbegin",
 				`City Coverage: <span class="city-coverage">${state.query.rain.precipcover}</span>%`,
@@ -132,9 +129,7 @@ export function changeView(state: State, targetView: keyof typeof View) {
 				rainContainer.appendChild(child);
 			});
 
-			[representationImg, rainContainer].forEach((viewChild) => {
-				rainView.appendChild(viewChild);
-			});
+			rainView.appendChild(rainContainer);
 
 			body.appendChild(rainView);
 			break;
@@ -142,19 +137,57 @@ export function changeView(state: State, targetView: keyof typeof View) {
 	}
 }
 
-export function changeUnit(state: State, targetUnit: TemperatureUnit) {
+export function changeUnit(
+	state: State,
+	targetUnit: TemperatureUnit,
+	e: MouseEvent,
+) {
+	const prevSelected = document.querySelector(
+		"span.units > span.selected",
+	) as HTMLElement;
+	const current = e.currentTarget as HTMLElement;
+
+	if (current === prevSelected) return;
+
+	prevSelected?.classList.remove("selected");
+	current.classList.add("selected");
+
+	const units = document.querySelector("span.units") as HTMLSpanElement;
+
 	if (targetUnit === "celsius") {
-		document
-			.querySelector("span.units > span.celsius")
-			?.classList.add("selected");
+		units.style.setProperty("--highlight-right", "auto");
+		units.style.setProperty("--highlight-left", "0");
 		state.unit = "celsius";
-		return;
+	} else {
+		units.style.setProperty("--highlight-right", "0");
+		units.style.setProperty("--highlight-left", "auto");
+		state.unit = "feirenheit";
 	}
 
-	document
-		.querySelector("span.units > span.feirenheit")
-		?.classList.add("selected");
-	state.unit = "feirenheit";
+	if (!state.query) return;
 
-	return;
+	if (state.query.temperature.temp !== "")
+		state.query.temperature.temp = convertUnits(
+			Number(state.query?.temperature.temp),
+			targetUnit,
+		);
+
+	state.query.temperature.tempmin = convertUnits(
+		Number(state.query?.temperature.tempmin),
+		targetUnit,
+	);
+	state.query.temperature.tempmax = convertUnits(
+		Number(state.query?.temperature.tempmax),
+		targetUnit,
+	);
+
+	changeView(state, View[state.view] as keyof typeof View);
+}
+
+function convertUnits(origin: number, targetUnit: TemperatureUnit) {
+	const calc =
+		targetUnit === "celsius" ? (origin - 32) / 1.8 : origin * 1.8 + 32;
+
+	const result = calc.toFixed(1);
+	return result;
 }

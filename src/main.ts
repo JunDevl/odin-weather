@@ -9,7 +9,7 @@ const state: State = {
 	loading: false,
 
 	unit: "celsius",
-	view: null,
+	view: View.Temperature,
 };
 
 const location = document.querySelector(
@@ -20,16 +20,24 @@ const dateElem = document.querySelector(
 ) as HTMLInputElement;
 
 document.querySelectorAll("nav.header > h2").forEach((elem) => {
-	elem.addEventListener("click", () =>
-		changeView(state, elem.firstElementChild?.textContent as keyof typeof View),
+	(elem as HTMLElement).addEventListener("click", (e) =>
+		changeView(
+			state,
+			elem.firstElementChild?.textContent as keyof typeof View,
+			e,
+		),
 	);
 });
 
-document.querySelectorAll("h2.temperature > span.units").forEach((elem) => {
-	const unit: TemperatureUnit =
-		elem.textContent === "ºc" ? "celsius" : "feirenheit";
-	elem.addEventListener("click", () => changeUnit(state, unit));
-});
+document
+	.querySelectorAll("h2.temperature > span.units > span")
+	.forEach((elem) => {
+		const unit: TemperatureUnit =
+			elem.textContent === "ºc" ? "celsius" : "feirenheit";
+		(elem as HTMLElement).addEventListener("click", (e) =>
+			changeUnit(state, unit, e),
+		);
+	});
 
 location.addEventListener("keypress", (e) => {
 	if (e.key !== "Enter") return;
@@ -41,7 +49,7 @@ location.addEventListener("keypress", (e) => {
 			resolvedAddress: json.resolvedAddress,
 
 			temperature: {
-				temp: json.currentConditions.temp,
+				temp: json.currentConditions ? json.currentConditions.temp : "",
 				tempmin: json.days[0].tempmin,
 				tempmax: json.days[0].tempmax,
 			},
@@ -51,32 +59,38 @@ location.addEventListener("keypress", (e) => {
 				windspeed: json.days[0].windspeed,
 			},
 
-			rain: json.days[0].preciptype.includes("rain")
-				? {
-						precip: json.days[0].precip,
-						precipprob: json.days[0].precipprob,
-						precipcover: json.days[0].precipcover,
-					}
-				: {
-						precip: 0,
-						precipprob: 0,
-						precipcover: 0,
-					},
+			rain:
+				json.days[0].preciptype && json.days[0].preciptype.includes("rain")
+					? {
+							precip: json.days[0].precip,
+							precipprob: json.days[0].precipprob,
+							precipcover: json.days[0].precipcover,
+						}
+					: {
+							precip: 0,
+							precipprob: 0,
+							precipcover: 0,
+						},
 		};
 		const body = document.querySelector("div.content > div.body");
 		if (body?.children.length)
 			body?.removeChild(body.children[body.children.length - 1]);
 
-		const resolvedCity = document.createElement("p");
-		resolvedCity.className = "resolved-city";
-		resolvedCity.insertAdjacentHTML(
-			"afterbegin",
-			`Results for: <span class="city">${state.query.resolvedAddress}</span>`,
-		);
+		if (!document.querySelector("p.resolved-city")) {
+			const resolvedCity = document.createElement("p");
+			resolvedCity.className = "resolved-city";
+			resolvedCity.insertAdjacentHTML(
+				"afterbegin",
+				`Results for: <span class="city">${state.query.resolvedAddress}</span>`,
+			);
 
-		body?.appendChild(resolvedCity);
-
-		state.view = View.Temperature;
+			body?.appendChild(resolvedCity);
+		} else {
+			const city = document.querySelector(
+				"p.resolved-city > span.city",
+			) as HTMLSpanElement;
+			city.textContent = state.query.resolvedAddress;
+		}
 
 		changeView(state, View[state.view] as keyof typeof View);
 
@@ -84,15 +98,13 @@ location.addEventListener("keypress", (e) => {
 	});
 });
 
-function showSpinner() {}
-
 async function getWeatherData(location: string, date: Date) {
 	try {
-		const dateString = date.toISOString();
+		const dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
 
-		const weatherOfLocation = await fetch(
-			`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${dateString}/${dateString}?unitGroup=metric&key=${process.env.API_KEY}`,
-		);
+		const query = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${dateString}?unitGroup=metric&key=${process.env.API_KEY}`;
+
+		const weatherOfLocation = await fetch(query);
 
 		const weatherJson = await weatherOfLocation.json();
 
